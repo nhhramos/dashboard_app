@@ -2,24 +2,107 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import CSVUpload from "@/components/CSVUpload";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import {
+  Menu,
+  BarChart3,
+  Sparkles,
+  Shield,
+  Upload,
+  TrendingUp,
+  MessageSquare,
+  Lightbulb,
+  FileSpreadsheet,
+} from "lucide-react";
+
+import { ReactElement } from "react";
+
+// Tipagem das props dos componentes
+type FeatureCardProps = {
+  icon: ReactElement;
+  title: string;
+  description: string;
+};
+
+type StepProps = {
+  icon: ReactElement;
+  title: string;
+  text: string;
+};
+
+type FooterColumnProps = {
+  title: string;
+  links: string[];
+};
+
+// Componente FeatureCard
+function FeatureCard({ icon, title, description }: FeatureCardProps) {
+  return (
+    <div className="flex flex-col items-center text-center p-6 rounded-xl border border-border/50 bg-card/30 hover:bg-card/50 transition-all">
+      <div className="mb-3">{icon}</div>
+      <h4 className="font-semibold mb-2">{title}</h4>
+      <p className="text-sm text-muted-foreground">{description}</p>
+    </div>
+  );
+}
+
+// Componente Step
+function Step({ icon, title, text }: StepProps) {
+  return (
+    <div className="flex flex-col items-center text-center p-4">
+      <div className="mb-2">{icon}</div>
+      <h5 className="font-medium mb-1">{title}</h5>
+      <p className="text-sm text-muted-foreground">{text}</p>
+    </div>
+  );
+}
+
+// Componente FooterColumn
+function FooterColumn({ title, links }: FooterColumnProps) {
+  return (
+    <div className="flex flex-col gap-2">
+      <h6 className="font-semibold">{title}</h6>
+      <ul className="flex flex-col gap-1 text-sm text-muted-foreground">
+        {links.map((link, i) => (
+          <li key={i}>
+            <a href="#" className="hover:text-foreground transition-colors">
+              {link}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+
+
+
+
+
+
 
 export default function Hero() {
   const [, setLocation] = useLocation();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [apiUrl] = useState(import.meta.env.VITE_API_URL || "http://localhost:5000");
 
+  // Manipula upload do arquivo CSV
   const handleFileSelect = (file: File, columns?: string[]) => {
-    // Armazenar arquivo no localStorage
     const reader = new FileReader();
     reader.onload = (e) => {
       const content = e.target?.result;
-      localStorage.setItem("uploadedCSV", JSON.stringify({ 
-        name: file.name, 
-        content,
-        columns 
-      }));
-      // Navegar para a página de chat
+
+      // Armazena o arquivo e colunas no localStorage
+      localStorage.setItem(
+        "uploadedCSV",
+        JSON.stringify({
+          name: file.name,
+          content,
+          columns,
+          uploadedAt: new Date().toISOString(),
+        })
+      );
+
+      // Redireciona para o chat
       setLocation("/chat");
     };
     reader.readAsText(file);
@@ -31,17 +114,32 @@ export default function Hero() {
       <header className="border-b border-border/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">CSV</span>
+            {/* Logo */}
+            <div className="relative w-10 h-10 bg-gradient-to-br from-primary via-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+              <FileSpreadsheet
+                className="w-5 h-5 text-primary-foreground"
+                strokeWidth={2.5}
+              />
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                <Sparkles className="w-2.5 h-2.5 text-white" strokeWidth={3} />
+              </div>
             </div>
-            <h1 className="text-2xl font-bold">CSV Analyzer</h1>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              CSV Analyzer
+            </h1>
           </div>
 
           <nav className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-foreground/70 hover:text-foreground transition-colors">
+            <a
+              href="#features"
+              className="text-foreground/70 hover:text-foreground transition-colors"
+            >
               Recursos
             </a>
-            <a href="#how-it-works" className="text-foreground/70 hover:text-foreground transition-colors">
+            <a
+              href="#how-it-works"
+              className="text-foreground/70 hover:text-foreground transition-colors"
+            >
               Como Funciona
             </a>
             <Button variant="outline" size="sm">
@@ -58,7 +156,7 @@ export default function Hero() {
       {/* Hero Section */}
       <section className="flex-1 flex items-center justify-center py-20 px-4">
         <div className="max-w-4xl w-full">
-          {/* Main Content */}
+          {/* Texto principal */}
           <div className="text-center mb-16">
             <h2 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
               Seu Assistente Inteligente para{" "}
@@ -66,14 +164,19 @@ export default function Hero() {
             </h2>
 
             <p className="text-xl text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
-              Analise, entenda e solucione suas planilhas de forma fácil e rápida
-              com a ajuda de inteligência artificial avançada.
+              Analise, entenda e extraia insights das suas planilhas com
+              inteligência artificial avançada.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <Button
                 size="lg"
                 className="bg-primary hover:bg-primary/90 text-lg px-8"
+                onClick={() =>
+                  document
+                    .getElementById("upload-section")
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
               >
                 Começar Agora
               </Button>
@@ -81,94 +184,57 @@ export default function Hero() {
                 size="lg"
                 variant="outline"
                 className="text-lg px-8"
+                onClick={() => setLocation("/chat")}
               >
                 Ver Demo
               </Button>
             </div>
           </div>
 
-          {/* Upload Area */}
-          <div className="mb-20">
+          {/* Upload CSV */}
+          <div id="upload-section" className="mb-20">
             <CSVUpload onFileSelect={handleFileSelect} apiUrl={apiUrl} />
           </div>
 
-          {/* Features Grid */}
+          {/* Features */}
           <div id="features" className="grid md:grid-cols-3 gap-8 mb-20">
-            <div className="p-6 bg-card rounded-xl border border-border hover:border-primary/50 transition-colors">
-              <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
-                <span className="text-2xl">📊</span>
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Análise Profunda</h3>
-              <p className="text-foreground/70">
-                Extrai insights valiosos de seus dados com análise estatística avançada.
-              </p>
-            </div>
-
-            <div className="p-6 bg-card rounded-xl border border-border hover:border-primary/50 transition-colors">
-              <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
-                <span className="text-2xl">🤖</span>
-              </div>
-              <h3 className="text-lg font-semibold mb-2">IA Inteligente</h3>
-              <p className="text-foreground/70">
-                Respostas contextualizadas e personalizadas para suas perguntas sobre dados.
-              </p>
-            </div>
-
-            <div className="p-6 bg-card rounded-xl border border-border hover:border-primary/50 transition-colors">
-              <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
-                <span className="text-2xl">⚡</span>
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Rápido e Seguro</h3>
-              <p className="text-foreground/70">
-                Processamento instantâneo com máxima segurança e privacidade dos dados.
-              </p>
-            </div>
+            <FeatureCard
+              icon={<BarChart3 className="w-6 h-6 text-blue-600 dark:text-blue-400" />}
+              title="Análise Profunda"
+              description="Extraia insights valiosos com análise estatística avançada e visualização inteligente."
+            />
+            <FeatureCard
+              icon={<Sparkles className="w-6 h-6 text-purple-600 dark:text-purple-400" />}
+              title="IA Inteligente"
+              description="Respostas contextuais e personalizadas para suas perguntas sobre dados."
+            />
+            <FeatureCard
+              icon={<Shield className="w-6 h-6 text-green-600 dark:text-green-400" />}
+              title="Rápido e Seguro"
+              description="Processamento instantâneo com máxima segurança e privacidade de dados."
+            />
           </div>
 
-          {/* How It Works */}
-          <div id="how-it-works" className="bg-card/50 rounded-xl border border-border p-12 mb-20">
+          {/* Como Funciona */}
+          <div
+            id="how-it-works"
+            className="bg-card/50 rounded-xl border border-border p-12 mb-20"
+          >
             <h3 className="text-3xl font-bold mb-12 text-center">Como Funciona</h3>
 
             <div className="grid md:grid-cols-4 gap-6">
-              <div className="text-center">
-                <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-lg mx-auto mb-4">
-                  1
-                </div>
-                <h4 className="font-semibold mb-2">Faça Upload</h4>
-                <p className="text-sm text-foreground/70">
-                  Selecione seu arquivo CSV
-                </p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-lg mx-auto mb-4">
-                  2
-                </div>
-                <h4 className="font-semibold mb-2">Processa</h4>
-                <p className="text-sm text-foreground/70">
-                  IA analisa seus dados
-                </p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-lg mx-auto mb-4">
-                  3
-                </div>
-                <h4 className="font-semibold mb-2">Conversa</h4>
-                <p className="text-sm text-foreground/70">
-                  Faça perguntas sobre dados
-                </p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-lg mx-auto mb-4">
-                  4
-                </div>
-                <h4 className="font-semibold mb-2">Insights</h4>
-                <p className="text-sm text-foreground/70">
-                  Obtenha respostas e insights
-                </p>
-              </div>
+              <Step icon={<Upload />} title="Faça Upload" text="Envie seu arquivo CSV" />
+              <Step icon={<TrendingUp />} title="Processa" text="IA analisa seus dados" />
+              <Step
+                icon={<MessageSquare />}
+                title="Converse"
+                text="Faça perguntas sobre seus dados"
+              />
+              <Step
+                icon={<Lightbulb />}
+                title="Obtenha Insights"
+                text="Receba análises automáticas"
+              />
             </div>
           </div>
         </div>
@@ -178,41 +244,19 @@ export default function Hero() {
       <footer className="border-t border-border/50 bg-card/30 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-12">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <h4 className="font-semibold mb-4">Sobre</h4>
-              <ul className="space-y-2 text-sm text-foreground/70">
-                <li><a href="#" className="hover:text-foreground transition-colors">Sobre Nós</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Carreiras</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-4">Produto</h4>
-              <ul className="space-y-2 text-sm text-foreground/70">
-                <li><a href="#" className="hover:text-foreground transition-colors">Recursos</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Preços</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Documentação</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm text-foreground/70">
-                <li><a href="#" className="hover:text-foreground transition-colors">Privacidade</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Termos</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Cookies</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-4">Contato</h4>
-              <ul className="space-y-2 text-sm text-foreground/70">
-                <li><a href="mailto:contato@csvanalyzer.com" className="hover:text-foreground transition-colors">contato@csvanalyzer.com</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Twitter</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">LinkedIn</a></li>
-              </ul>
-            </div>
+            <FooterColumn
+              title="Sobre"
+              links={["Sobre Nós", "Blog", "Carreiras"]}
+            />
+            <FooterColumn
+              title="Produto"
+              links={["Recursos", "Preços", "Documentação"]}
+            />
+            <FooterColumn title="Legal" links={["Privacidade", "Termos", "Cookies"]} />
+            <FooterColumn
+              title="Contato"
+              links={["contato@csvanalyzer.com", "Twitter", "LinkedIn"]}
+            />
           </div>
 
           <div className="border-t border-border/50 pt-8 flex flex-col md:flex-row items-center justify-between">
@@ -220,10 +264,16 @@ export default function Hero() {
               © 2024 CSV Analyzer. Todos os direitos reservados.
             </p>
             <div className="flex gap-6 mt-4 md:mt-0">
-              <a href="#" className="text-sm text-foreground/70 hover:text-foreground transition-colors">
+              <a
+                href="#"
+                className="text-sm text-foreground/70 hover:text-foreground transition-colors"
+              >
                 Status
               </a>
-              <a href="#" className="text-sm text-foreground/70 hover:text-foreground transition-colors">
+              <a
+                href="#"
+                className="text-sm text-foreground/70 hover:text-foreground transition-colors"
+              >
                 Suporte
               </a>
             </div>
@@ -233,4 +283,6 @@ export default function Hero() {
     </div>
   );
 }
+
+
 

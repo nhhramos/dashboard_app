@@ -25,7 +25,7 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    strictPort: false, // Will find next available port if 3000 is busy
+    strictPort: false,
     host: true,
     allowedHosts: [
       ".manuspre.computer",
@@ -40,5 +40,23 @@ export default defineConfig({
       strict: true,
       deny: ["**/.*"],
     },
+    // ✅ ADICIONE ESTA CONFIGURAÇÃO DE PROXY
+    proxy: {
+      '/chat': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/upload_csv': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/health': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
   },
 });
