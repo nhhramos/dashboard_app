@@ -13,6 +13,20 @@ load_dotenv()
 
 app = Flask(__name__)
 
+@app.route('/')
+def index():
+    return jsonify({
+        "message": "Bem-vindo à CSV Analizer!",
+        "status": "online",
+        "endpoints": {
+        "health": "/health",
+        "chat": "/chat (POST)",
+        "upload_csv": "/upload_csv (POST)",
+        "dashboard": "/dashboard (POST)"
+        },
+        "version": "1.0"
+    })
+
 # Configurar CORS para permitir requisições do front-end
 CORS(app, resources={
     r"/*": {
