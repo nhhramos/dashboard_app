@@ -1,6 +1,6 @@
 # 📊 CSV Analyzer - Guia de Instalação e Uso
 
-Aplicação para análise inteligente de arquivos CSV usando IA (Google Gemini).
+Aplicação para análise inteligente de arquivos CSV usando Dashboard + IA (Google Gemini).
 
 ## 🚀 Tecnologias
 
