@@ -28,14 +28,19 @@ def index():
     })
 
 # Configurar CORS para permitir requisições do front-end
+# app.py
 CORS(app, resources={
     r"/*": {
-        "origins": ["http://localhost:5173", "http://localhost:3000"],
+        "origins": [
+            "http://localhost:5173",
+            "http://localhost:3000",
+            "https://*.vercel.app",  # Aceita todos os domínios do Vercel
+            "https://dashboard-app-kofs.onrender.com"  # Ou seu domínio específico
+        ],
         "methods": ["GET", "POST", "OPTIONS"],
         "allow_headers": ["Content-Type"]
     }
 })
-
 app.config["UPLOAD_FOLDER"] = "./uploads"
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16MB max file size
 
