@@ -31,12 +31,7 @@ def index():
 # app.py
 CORS(app, resources={
     r"/*": {
-        "origins": [
-            "http://localhost:5173",
-            "http://localhost:3000",
-            "https://*.vercel.app",  # Aceita todos os domínios do Vercel
-            "https://dashboard-app-kofs.onrender.com"  # Ou seu domínio específico
-        ],
+        "origins": "*",  # Aceita todas as origens
         "methods": ["GET", "POST", "OPTIONS"],
         "allow_headers": ["Content-Type"]
     }
@@ -61,17 +56,6 @@ else:
 df_global = None
 
 # Função para carregar CSV local de exemplo ao iniciar
-def load_local_csv():
-    global df_global
-    local_csv_path = "./exemplo_vendas.csv"
-    if os.path.exists(local_csv_path):
-        try:
-            df_global = pd.read_csv(local_csv_path)
-            print(f" CSV local carregado: {local_csv_path}")
-        except Exception as e:
-            print(f" Erro ao carregar CSV local: {str(e)}")
-
-load_local_csv()
 
 # Função para identificar tipos de análises disponíveis baseado na pergunta e nos dados
 def generate_dashboard(user_message, df):
