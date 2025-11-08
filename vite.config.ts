@@ -40,7 +40,7 @@ export default defineConfig({
       strict: true,
       deny: ["**/.*"],
     },
-    // ✅ ADICIONE ESTA CONFIGURAÇÃO DE PROXY
+    //  ADICIONE ESTA CONFIGURAÇÃO DE PROXY
     proxy: {
       '/chat': {
         target: 'http://localhost:5000',
